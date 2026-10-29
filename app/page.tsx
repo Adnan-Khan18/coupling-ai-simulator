@@ -469,9 +469,49 @@ couplingType={type === "flexible" ? "flexible" : "rigid"}
                     <div className="result-row"><span>Key bearing stress</span><b>{results.keyBearingStressMPa.toFixed(2)} <small>MPa</small></b></div>
                     <div className="result-row"><span>Hub torsional stress</span><b>{results.hubTorsionalStressMPa.toFixed(2)} <small>MPa</small></b></div>
                     <div className="result-row"><span>Minimum calculated key length</span><b>{results.minimumKeyLengthMM.toFixed(2)} <small>mm</small></b></div>
-                    <div className="result-row"><span>Estimated tangential force per bolt</span><b>{results.boltForceN.toFixed(2)} <small>N</small></b></div>
-                    <div className="result-row"><span>Bolt shear stress</span><b>{results.boltShearStressMPa.toFixed(2)} <small>MPa</small></b></div>
-                    <div className="result-row"><span>Bolt shear check</span><b>{results.boltStatus}</b></div>
+                    
+<div className="result-row"><span>Estimated tangential force per bolt</span><b>{results.boltForceN.toFixed(2)} <small>N</small></b></div>
+<div className="result-row"><span>Bolt shear stress</span><b>{results.boltShearStressMPa.toFixed(2)} <small>MPa</small></b></div>
+<div className="result-row"><span>Bolt shear check</span><b>{results.boltStatus}</b></div>
+
+<div className="section-rule"><span>TORQUE CAPACITY ANALYSIS</span><i /></div>
+
+<div className="result-row">
+  <span>Shaft torque capacity</span>
+  <b>{results.shaftTorqueCapacityNm.toFixed(2)} <small>N·m</small></b>
+</div>
+<div className="result-row">
+  <span>Key shear torque capacity</span>
+  <b>{results.keyShearTorqueCapacityNm.toFixed(2)} <small>N·m</small></b>
+</div>
+<div className="result-row">
+  <span>Key bearing torque capacity</span>
+  <b>{results.keyBearingTorqueCapacityNm.toFixed(2)} <small>N·m</small></b>
+</div>
+<div className="result-row">
+  <span>Hub torque capacity</span>
+  <b>{results.hubTorqueCapacityNm.toFixed(2)} <small>N·m</small></b>
+</div>
+<div className="result-row">
+  <span>Bolt torque capacity</span>
+  <b>{results.boltTorqueCapacityNm.toFixed(2)} <small>N·m</small></b>
+</div>
+<div className="result-row">
+  <span>Limiting component torque capacity</span>
+  <b>{results.limitingTorqueCapacityNm.toFixed(2)} <small>N·m</small></b>
+</div>
+<div className="result-row">
+  <span>Capacity / design torque ratio</span>
+  <b>{results.torqueCapacitySafetyFactor.toFixed(2)}</b>
+</div>
+<div className={`design-status ${results.torqueCapacityStatus === "PASS" ? "status-pass" : "status-fail"}`}>
+  <Icon name={results.torqueCapacityStatus === "PASS" ? "check" : "activity"} size={17} />
+  <div>
+    <b>{results.torqueCapacityStatus === "PASS" ? "Preliminary torque capacity check passed" : "Required design torque exceeds calculated capacity"}</b>
+    <small>The limiting capacity is the minimum of the five calculated component capacities. This is a preliminary check based on the assumed stress limits and load distribution, not complete coupling certification.</small>
+  </div>
+</div>
+
                     <div className={`design-status ${results.overallStatus === "PASS" ? "status-pass" : "status-fail"}`}>
                       <Icon name={results.overallStatus === "PASS" ? "check" : "activity"} size={17} />
                       <div>

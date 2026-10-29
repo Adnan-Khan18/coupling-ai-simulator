@@ -24,6 +24,14 @@ export type RigidCouplingInput = {
 };
 
 export type RigidCouplingResults = {
+    shaftTorqueCapacityNm: number;
+  keyShearTorqueCapacityNm: number;
+  keyBearingTorqueCapacityNm: number;
+  hubTorqueCapacityNm: number;
+  boltTorqueCapacityNm: number;
+  limitingTorqueCapacityNm: number;
+  torqueCapacitySafetyFactor: number;
+  torqueCapacityStatus: CheckStatus;
   transmittedTorqueNm: number;
   designTorqueNm: number;
 
@@ -136,6 +144,47 @@ export function calculateRigidCoupling(
   const transmittedTorqueNm = (9550 * powerKW) / speedRPM;
   const designTorqueNm = transmittedTorqueNm * serviceFactor;
   const T = designTorqueNm * 1000; // N·mm
+    // Preliminary component torque capacities, converted to N·m.
+  // Key engagement length is assumed to equal hub length L.
+
+  const shaftTorqueCapacityNm =
+    (Math.PI * allowableShaftShearMPa * d ** 3) / 16 / 1000;
+
+  const keyShearTorqueCapacityNm =
+    (allowableKeyShearMPa * d * b * L) / 2 / 1000;
+
+  const keyBearingTorqueCapacityNm =
+    (allowableKeyBearingMPa * d * h * L) / 4 / 1000;
+
+  const hubPolarMomentForCapacity =
+    (Math.PI / 32) * (D ** 4 - d ** 4);
+
+  const hubTorqueCapacityNm =
+    (allowableShaftShearMPa * hubPolarMomentForCapacity) /
+    (D / 2) / 1000;
+
+  const boltAreaForCapacity =
+    (Math.PI * boltDiameterMM ** 2) / 4;
+
+  const boltTorqueCapacityNm =
+    (allowableBoltShearMPa *
+      boltAreaForCapacity *
+      boltCount *
+      boltPCDMM) / 2 / 1000;
+
+  const limitingTorqueCapacityNm = Math.min(
+    shaftTorqueCapacityNm,
+    keyShearTorqueCapacityNm,
+    keyBearingTorqueCapacityNm,
+    hubTorqueCapacityNm,
+    boltTorqueCapacityNm
+  );
+
+  const torqueCapacitySafetyFactor =
+    limitingTorqueCapacityNm / designTorqueNm;
+
+  const torqueCapacityStatus: CheckStatus =
+    limitingTorqueCapacityNm >= designTorqueNm ? "PASS" : "FAIL";
 
   // 2. Solid shaft under pure torsion:
   // T = (π/16) τ d³  =>  d = cube_root(16T / (πτ)).
@@ -224,5 +273,13 @@ export function calculateRigidCoupling(
     boltShearStressMPa,
     boltStatus,
     overallStatus,
+    shaftTorqueCapacityNm,
+    keyShearTorqueCapacityNm,
+    keyBearingTorqueCapacityNm,
+    hubTorqueCapacityNm,
+    boltTorqueCapacityNm,
+    limitingTorqueCapacityNm,
+    torqueCapacitySafetyFactor,
+    torqueCapacityStatus,
   };
 }
